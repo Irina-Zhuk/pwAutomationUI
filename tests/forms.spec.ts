@@ -1,5 +1,6 @@
 import {test as it} from "@playwright/test"
 
+
 it.describe('FORM PAGE',()=>{
   // it.beforeAll(()=>{
   //   console.log('before all');
@@ -23,6 +24,6 @@ it.describe('FORM PAGE',()=>{
     await page.getByPlaceholder('Address 1').fill ('701 Tobie ct')
     await page.locator('label:has-text("City*") ~ input#inputCity').fill('New York')
     await page.getByRole('textbox', {name: 'Zip Code'}).fill('10001')
-    await page.pause ()
+    // await page.pause ()
   })
 })
