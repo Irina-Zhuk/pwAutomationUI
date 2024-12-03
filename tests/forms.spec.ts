@@ -1,6 +1,18 @@
 import {test as it} from "@playwright/test"
 
-it.describe ('FORM PAGE',  () => {
+it.describe('FORM PAGE',()=>{
+  // it.beforeAll(()=>{
+  //   console.log('before all');
+  // })
+  // it.afterAll(()=>{
+  //   console.log('after all');
+  // })
+  // it.beforeEach(()=>{
+  //   console.log('before each');
+  // })
+  // it.afterEach(()=>{
+  //   console.log('after each');
+  // })
   it ('Fill all forms for form page', async ({page}) => {
    await page.goto ('https://www.lambdatest.com/selenium-playground/input-form-demo')
    // await page.pause ()
