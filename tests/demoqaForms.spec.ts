@@ -31,6 +31,7 @@ it.describe('FORM PAGE',()=>{
     await page.click('.react-datepicker__day--010');
     await page.locator('#subjectsInput').fill('Mathematics')
     await page.locator('label[for="hobbies-checkbox-1"]').click()
+    await page.locator ('#uploadPicture').setInputFiles('tests/data/1.jpg')
     await page.locator('[placeholder="Current Address"]').pressSequentially('12123 Mount Ave', {delay:500})
     await page.click('#state .css-yk16xz-control'); // Click on the dropdown container
     // Select the "NCR" option
@@ -42,16 +43,12 @@ it.describe('FORM PAGE',()=>{
     await page.locator('#city .css-yk16xz-control').click(); // Click to open the dropdown
     // Select "Gurgaon" from the dropdown
     await page.locator('#react-select-4-option-2').click();
-    await page.pause ()
-
-    // id="submit"
-
-    // await page.locator('[placeholder="Password"]').pressSequentially('password123', {delay:500})
-    // await page.locator('[for="companyname"] ~ [placeholder="Company"]').fill('Happy LLC')
-    // await page.selectOption('[name="country"]', {label: 'United States'})
-    // await page.getByPlaceholder('Address 1').fill ('701 Tobie ct')
-    // await page.locator('label:has-text("City*") ~ input#inputCity').fill('New York')
-    // await page.getByRole('textbox', {name: 'Zip Code'}).fill('10001')
     // await page.pause ()
+
+    await page.locator("#submit").click()
+
+
+
+
   })
 })
