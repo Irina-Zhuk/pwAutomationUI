@@ -1,4 +1,6 @@
-import {expect, Page} from "@playwright/test"
+import {expect, Locator, Page} from "@playwright/test"
+import  _ from 'lodash'
+
 export class DatePicker {
 
   page: Page;
@@ -9,12 +11,12 @@ export class DatePicker {
   header = "h1"
   url = 'https://www.lambdatest.com/selenium-playground/jquery-date-picker-demo'
   // From
-
   fromInput = '#from'
   prevMonth = "[title='Prev']"
-  dayOfTheYear =
-  dayOfTheMonth =
-  dayFromComponent =
+  dateOfTheYear = ".ui-datepicker-year"
+  dateOfTheMonth = '[class="ui-datepicker-month"]'
+  dayFromComponent = '#ui-datepicker-div'
+
   public async open() {
     await this.page.goto(this.url)
   }
@@ -22,17 +24,10 @@ export class DatePicker {
      const header = this.page.locator (this.header)
      await expect (header).toContainText('Date Picker')
   }
+  // randomYearNumber = Math.floor(Math.random() * 1000)
   randomYearNumber = _.random(1,50)
-  date = _.random(1,30)
+  day = _.random(1,30)
   public async dateFromToday(){
-    await this.page.locator(this.fromInput).click()
-    for (let i=0; i < randomNumber; i++)
-    await this.page.locator(this.prevMonth).click()
-
-    let year = await this.page.locator(this.dayOfTheYear).textContent()
-    let month = await this.page.locator(this.dayOfTheMonth)
-      .locator('')
-      .textContent()
     let obj = {
       Jan:"01",
       Feb:"02",
@@ -47,10 +42,28 @@ export class DatePicker {
       Nov:"11",
       Dec:"12"
     }
+    await this.page.locator(this.fromInput).click()
+    for (let i=0; i < this.randomYearNumber; i++) {
+      await this.page.locator(this.prevMonth).click()
+    }
+    console.log (this.randomYearNumber)
 
+    let year = await this.page.locator(this.dateOfTheYear).textContent()
+    let month = await this.page
+      .locator(this.dateOfTheMonth)
+      .locator('[selected="selected"]')
+      .textContent()
+    console.log(year, 'year')
+    console.log(month, 'month')
+    console.log(this.day, 'day')
 
-    await this.page.pause()
+    await this.page
+      .locator(this.dayFromComponent)
+      .getByRole('link', {name: this.day, exact: true})
+      .click()
+
+    expect(await this.page.locator(this.fromInput).inputValue()).toBe(
+      `${obj[month]}/${this.day}/${year}`,
+    ); //mm/dd/yyyy
   }
-
-
 }
