@@ -114,11 +114,5 @@ export class DatePicker {
     expect(await this.page.locator(this.toInput).inputValue()).toBe(
       `${obj1[month]}/${this.day}/${year}`,
     ); //mm/dd/yyyy
-
-
-
-
-
-
-  }
+   }
 }
