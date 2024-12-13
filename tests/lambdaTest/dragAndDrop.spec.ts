@@ -1,6 +1,6 @@
 // dragAndDrop.spec.ts
 import { test } from '@playwright/test';
-import { DragAndDrop } from '../../page_object/DragAndDrop';
+import { DragAndDrop } from '../../pageObject/LambdaTest/Solutions/DragAndDrop';
 
 test.describe('DRAG AND DROP', () => {
   test('drag and drop', async ({ page }) => {
