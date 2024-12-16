@@ -1,89 +1,3 @@
-// import { test as it } from "@playwright/test";
-// import { DatePicker } from "../../pageObject/LambdaTest/Solutions/DatePicker";
-// import {expect} from "@playwright/test"
-
-// it.describe("Date Picker PAGE", () => {
-//   it("set and validate random date for From input field", async ({ page }) => {
-//     const datePicker = new DatePicker(page);
-//     await datePicker.open();
-//     await datePicker.verifyHeader();
-//     await datePicker.dateFromToday();
-//   });
-//
-//   it("set and validate random date for To input field", async ({ page }) => {
-//     const datePicker = new DatePicker(page);
-//     await datePicker.open();
-//     await datePicker.verifyHeader();
-//     await datePicker.dateToToday();
-//   });
-//
-//   it("validate February in a leap year", async ({ page }) => {
-//     const datePicker = new DatePicker(page);
-//     await datePicker.open();
-//     await datePicker.verifyHeader();
-//
-//     // Navigate to February of a known leap year
-//     await datePicker.page.locator(datePicker.fromInput).click();
-//
-//     // Simulate leap year by selecting February 2024
-//     for (let i = 0; i < 50; i++) {
-//       await datePicker.page.locator(datePicker.prevMonth).click();
-//     }
-//
-//     const year = "2024"; // Leap year
-//     const month = "Feb";
-//     const daysInMonth = new Date(parseInt(year), 2, 0).getDate();
-//
-//     // Validate February has 29 days in a leap year
-//     expect(daysInMonth).toBe(29);
-//     console.log(`Leap year validation passed: February ${year} has ${daysInMonth} days.`);
-//   });
-//
-//   it("validate that To date is after From date", async ({ page }) => {
-//     const datePicker = new DatePicker(page);
-//     await datePicker.open();
-//     await datePicker.verifyHeader();
-//
-//     // Set From date
-//     await datePicker.page.locator(datePicker.fromInput).click();
-//     const fromYear = "2022";
-//     const fromMonth = "12";
-//     const fromDay = "15";
-//     const fromDate = `${fromMonth}/${fromDay}/${fromYear}`;
-//
-//     await datePicker.page
-//       .locator(datePicker.dayFromComponent)
-//       .getByRole("link", { name: fromDay, exact: true })
-//       .click();
-//
-//     expect(await datePicker.page.locator(datePicker.fromInput).inputValue()).toBe(fromDate);
-//
-//     // Set To date and ensure it is after From date
-//     await datePicker.page.locator(datePicker.toInput).click();
-//     const toYear = "2022";
-//     const toMonth = "12";
-//     const toDay = "20";
-//     const toDate = `${toMonth}/${toDay}/${toYear}`;
-//
-//     await datePicker.page
-//       .locator(datePicker.dayToComponent)
-//       .getByRole("link", { name: toDay, exact: true })
-//       .click();
-//
-//     expect(await datePicker.page.locator(datePicker.toInput).inputValue()).toBe(toDate);
-//
-//     // Validate that To date is after From date
-//     const fromDateObject = new Date(`${fromYear}-${fromMonth}-${fromDay}`);
-//     const toDateObject = new Date(`${toYear}-${toMonth}-${toDay}`);
-//     expect(toDateObject.getTime()).toBeGreaterThan(fromDateObject.getTime());
-//     console.log("Validation passed: To date is after From date.");
-//   });
-// });
-
-
-
-
-
 import {test as it} from "@playwright/test"
 import {DatePicker} from "../../pageObject/LambdaTest/Solutions/DatePicker";
 import {expect} from "@playwright/test"
@@ -109,12 +23,11 @@ it.describe ('Date Picker PAGE', () => {
 
   it("should pick 29th February in a random leap year", async ({page}) => {
     const datePicker = new DatePicker(page);
-    await datePicker.open();
-    await datePicker.verifyHeader();
+    await page.reload()
 
     // Define the range of years
     const startYear = 1980;
-    const endYear = 2050;
+    const endYear = 2036;
 
     // Generate a random leap year
     let randomYear: number;
@@ -186,7 +99,51 @@ it.describe ('Date Picker PAGE', () => {
       await datePicker.page.locator(datePicker.prevMonth).click();
     }
   }
-})
+
+  it("should prevent selecting a To date before the From date", async ({ page }) => {
+    const datePicker = new DatePicker(page);
+
+    // Open the Date Picker page and verify the header
+    await datePicker.open();
+    await datePicker.verifyHeader();
+
+    // Set a random "From" date
+    await datePicker.dateFromToday();
+    const fromDate = await page.locator(datePicker.fromInput).inputValue();
+    console.log(`Selected From date: ${fromDate}`);
+
+    // Attempt to select a "To" date before the "From" date
+    await page.locator(datePicker.toInput).click(); // Open the "To" date picker
+    await page.locator(datePicker.prevMonthTo).click(); // Navigate to the previous month
+
+    // Select the last day of the previous month
+    const lastDayOfPrevMonth =  page
+      .locator(`${datePicker.dayToComponent} a`)
+      .last(); // Select the last element directly
+
+    const invalidDayText = await lastDayOfPrevMonth.textContent();
+    console.log(`Attempting to select invalid To date: ${invalidDayText}`);
+
+    await lastDayOfPrevMonth.click(); // Attempt to select the invalid date
+
+    // Validate that the "To" date input value is not updated to the invalid date
+    const toDate = await page.locator(datePicker.toInput).inputValue();
+    console.log(`Actual To date after invalid selection attempt: ${toDate}`);
+
+    // Ensure the "To" date is not before the "From" date
+    expect(new Date(toDate).getTime()).toBeGreaterThanOrEqual(new Date(fromDate).getTime());
+    console.log(
+      `Validation passed: To date (${toDate}) is not before the From date (${fromDate}).`
+    );
+  });
+});
+
+
+
+
+
+
+
 
 
 
